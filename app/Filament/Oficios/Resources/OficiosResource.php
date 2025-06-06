@@ -54,6 +54,16 @@ class OficiosResource extends Resource
                 TextColumn::make('fecha_elaboracion')
                     ->date()
                     ->sortable(),
+                TextColumn::make('log_path')
+                    ->label('Log')
+                    ->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')
+                    ->url(
+                        fn($record) => $record->log_path
+                            ? route('descargar.log.sftp', ['proceso' => $record->id])
+                            : null,
+                        shouldOpenInNewTab: true
+                    )
+                    ->color('primary')
 
             ])
             ->filters([

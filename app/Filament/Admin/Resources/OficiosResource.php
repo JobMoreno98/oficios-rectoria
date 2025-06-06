@@ -6,6 +6,8 @@ use App\Filament\Admin\Resources\OficiosResource\Pages;
 use App\Filament\Admin\Resources\OficiosResource\RelationManagers;
 use App\Models\Oficios;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,6 +16,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Html;
+use Filament\Forms\Components\ViewField;
 
 class OficiosResource extends Resource
 {
@@ -38,6 +42,18 @@ class OficiosResource extends Resource
                     ->required(),
                 Forms\Components\DatePicker::make('fecha_elaboracion')
                     ->required(),
+                FileUpload::make('archivo')
+                    ->label('Archivo')
+                    ->disk('local') // se sube temporalmente al disco local
+                    ->directory('temp-uploads')
+                    ->preserveFilenames()
+                    ->required(),
+                ViewField::make('archivo')
+                    ->label('Archivo Actual')
+                    ->view('filament.components.link-descarga', function ($record) {
+                        return ['record' => $record];
+                    })
+                    ->columnSpanFull()
             ]);
     }
 
@@ -55,6 +71,18 @@ class OficiosResource extends Resource
                 Tables\Columns\TextColumn::make('fecha_elaboracion')
                     ->date()
                     ->sortable(),
+
+
+                TextColumn::make('log_path')
+                    ->label('Log')
+                    ->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')
+                    ->url(
+                        fn($record) => $record->log_path
+                            ? route('descargar.log.sftp', ['proceso' => $record->id])
+                            : null,
+                        shouldOpenInNewTab: true
+                    )
+                    ->color('primary'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -58,6 +58,16 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
+        ],
+        'sftp_files' => [
+            'driver' => 'sftp',
+            'host' => '192.168.100.20',
+            'username' => 'job',
+            'password' => '50p0rt3',
+            // 'privateKey' => storage_path('keys/id_rsa'), // si usás autenticación con clave
+            'port' => 22,
+            'root' => '/home/job/archivos', // ruta remota base
+            'timeout' => 30,
         ],
 
     ],
