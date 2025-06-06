@@ -13,6 +13,13 @@ class OficiosController extends Controller
     {
         $ruta = $oficio->archivo;
 
+        $user = auth()->user();
+
+        // Validar que sea admin o que sea quien creó el registro
+        if (!$user->hasRole('admin') && $user->id !== $oficio->solicito_id) {
+            abort(403, 'No autorizado para ver este archivo.');
+        }
+
         if (!Storage::disk('sftp_files')->exists($ruta)) {
             abort(404, 'Archivo no encontrado en el servidor remoto.');
         }
@@ -26,11 +33,15 @@ class OficiosController extends Controller
         // Forzar MIME type PDF para asegurarnos
         $mimeType = 'application/pdf';
 
-        return response()->stream(function () use ($stream) {
-            fpassthru($stream);
-        }, 200, [
-            "Content-Type" => $mimeType,
-            "Content-Disposition" => "inline; filename=\"" . basename($ruta) . "\"",
-        ]);
+        return response()->stream(
+            function () use ($stream) {
+                fpassthru($stream);
+            },
+            200,
+            [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => "inline; filename=\"" . basename($ruta) . "\"",
+            ],
+        );
     }
 }

@@ -24,17 +24,7 @@ class OficiosResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('elaboro_id')
-                    ->numeric()->hidden(),
-
-                Textarea::make('asunto')->required()->autosize(),
-                Forms\Components\TextInput::make('receptora')
-                    ->required(),
-                Forms\Components\DatePicker::make('fecha_elaboracion')->hidden()
-                    ->required(),
-            ])->columns(1);
+        return $form->schema([Forms\Components\TextInput::make('elaboro_id')->numeric()->hidden(), Textarea::make('asunto')->required()->autosize(), Forms\Components\TextInput::make('receptora')->required(), Forms\Components\DatePicker::make('fecha_elaboracion')->hidden()->required()])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -42,50 +32,34 @@ class OficiosResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->numeric()->searchable()->label('Folio'),
-                TextColumn::make('elabora.name')
-                    ->sortable(),
-                TextColumn::make('asunto')
-                    ->searchable(),
-                TextColumn::make('receptora')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()->label('Fecha de Solicitud'),
-                TextColumn::make('fecha_elaboracion')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('log_path')
-                    ->label('Log')
-                    ->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')
-                    ->url(
-                        fn($record) => $record->log_path
-                            ? route('descargar.log.sftp', ['proceso' => $record->id])
-                            : null,
-                        shouldOpenInNewTab: true
-                    )
-                    ->color('primary')
+                TextColumn::make('elabora.name')->sortable(),
+                TextColumn::make('asunto')->searchable(),
+                TextColumn::make('receptora')->searchable(),
+                TextColumn::make('created_at')->dateTime()->sortable()->label('Fecha de Solicitud'),
+                TextColumn::make('fecha_elaboracion')->date()->sortable(),
+                TextColumn::make('archivo')
+                    ->label('Archivo Actual')
+                    ->formatStateUsing(function ($state, $record) {
+                        // $state es el valor de 'archivo' (ej: ruta o nombre)
+                        // $record es el modelo completo
 
+                        // Renderizás la vista pasándole el record o lo que necesites
+                        return view('filament.components.link-descarga', ['record' => $record])->render();
+                    })
+                    ->html() // IMPORTANTE: para que se renderice como HTML el contenido
+                    ->sortable(false)
+                    ->searchable(false),
             ])
-            ->filters([
-                Tables\Filters\TrashedFilter::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                ]),
-            ]);
+            ->filters([Tables\Filters\TrashedFilter::make()])
+            ->actions([Tables\Actions\EditAction::make()])
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make(), Tables\Actions\ForceDeleteBulkAction::make(), Tables\Actions\RestoreBulkAction::make()])]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
@@ -100,8 +74,7 @@ class OficiosResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])->where('solicitante_id', Auth::id());;
+            ->withoutGlobalScopes([SoftDeletingScope::class])
+            ->where('solicitante_id', Auth::id());
     }
 }

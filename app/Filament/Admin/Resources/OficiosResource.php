@@ -25,91 +25,49 @@ class OficiosResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         return $this->hasRole('admin');
     }
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('elabora.name')
-                    ->numeric()->hidden(),
+        return $form->schema([
+            Forms\Components\TextInput::make('elabora.name')->numeric()->hidden(),
 
-                Textarea::make('asunto')->required()->autosize(),
-                Forms\Components\TextInput::make('receptora')
-                    ->required(),
-                Forms\Components\DatePicker::make('fecha_elaboracion')
-                    ->required(),
-                FileUpload::make('archivo')
-                    ->label('Archivo')
-                    ->disk('local') // se sube temporalmente al disco local
-                    ->directory('temp-uploads')
-                    ->preserveFilenames()
-                    ->required(),
-                ViewField::make('archivo')
-                    ->label('Archivo Actual')
-                    ->view('filament.components.link-descarga', function ($record) {
-                        return ['record' => $record];
-                    })
-                    ->columnSpanFull()
-            ]);
+            Textarea::make('asunto')->required()->autosize(),
+            Forms\Components\TextInput::make('receptora')->required(),
+            Forms\Components\DatePicker::make('fecha_elaboracion')->required(),
+            FileUpload::make('archivo')
+                ->label('Archivo')
+                ->disk('local') // se sube temporalmente al disco local
+                ->directory('temp-uploads')
+                ->preserveFilenames()
+                ->acceptedFileTypes(['application/pdf']),
+            ViewField::make('archivo')
+                ->label('Archivo Actual')
+                ->view('filament.components.link-descarga', function ($record) {
+                    return ['record' => $record];
+                })
+                ->columnSpanFull(),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('id')->numeric()->searchable()->label('Folio'),
-                Tables\Columns\TextColumn::make('solicito.name')->label('Solicitó')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('asunto')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('receptora')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('fecha_elaboracion')
-                    ->date()
-                    ->sortable(),
-
-
-                TextColumn::make('log_path')
-                    ->label('Log')
-                    ->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')
-                    ->url(
-                        fn($record) => $record->log_path
-                            ? route('descargar.log.sftp', ['proceso' => $record->id])
-                            : null,
-                        shouldOpenInNewTab: true
-                    )
-                    ->color('primary'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ->columns([TextColumn::make('id')->numeric()->searchable()->label('Folio'), Tables\Columns\TextColumn::make('solicito.name')->label('Solicitó')->sortable(), Tables\Columns\TextColumn::make('asunto')->searchable(), Tables\Columns\TextColumn::make('receptora')->searchable(), Tables\Columns\TextColumn::make('fecha_elaboracion')->date()->sortable(), TextColumn::make('log_path')->label('Log')->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')->url(fn($record) => $record->log_path ? route('descargar.log.sftp', ['proceso' => $record->id]) : null, shouldOpenInNewTab: true)->color('primary'), Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true), Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true)])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->actions([Tables\Actions\EditAction::make()])
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
