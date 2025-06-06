@@ -26,6 +26,8 @@ class OficiosPanelProvider extends PanelProvider
             ->id('oficios')
             ->path('oficios')
             ->login()
+            ->registration()
+            ->spa()
             ->colors([
                 'primary' => Color::Purple,
             ])
