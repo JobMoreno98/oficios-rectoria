@@ -24,17 +24,7 @@ class OficiosResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('elaboro_id')
-                    ->numeric()->hidden(),
-
-                Textarea::make('asunto')->required()->autosize(),
-                Forms\Components\TextInput::make('receptora')
-                    ->required(),
-                Forms\Components\DatePicker::make('fecha_elaboracion')->hidden()
-                    ->required(),
-            ])->columns(1);
+        return $form->schema([Forms\Components\TextInput::make('elaboro_id')->numeric()->hidden(), Textarea::make('asunto')->required()->autosize(), Forms\Components\TextInput::make('receptora')->required(), Forms\Components\DatePicker::make('fecha_elaboracion')->hidden()->required()])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -66,27 +56,23 @@ class OficiosResource extends Resource
                     )
                     ->color('primary')
 
+                        // Renderizás la vista pasándole el record o lo que necesites
+                        return view('filament.components.link-descarga', ['record' => $record])->render();
+                    })
+                    ->html() // IMPORTANTE: para que se renderice como HTML el contenido
+                    ->sortable(false)
+                    ->searchable(false),
             ])
-            ->filters([
-                Tables\Filters\TrashedFilter::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                ]),
-            ]);
+            ->filters([Tables\Filters\TrashedFilter::make()])
+            ->actions([Tables\Actions\EditAction::make()])
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make(), Tables\Actions\ForceDeleteBulkAction::make(), Tables\Actions\RestoreBulkAction::make()])]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
@@ -101,8 +87,7 @@ class OficiosResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])->where('solicitante_id', Auth::id());;
+            ->withoutGlobalScopes([SoftDeletingScope::class])
+            ->where('solicitante_id', Auth::id());
     }
 }

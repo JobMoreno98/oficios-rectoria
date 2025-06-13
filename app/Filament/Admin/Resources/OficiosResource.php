@@ -25,17 +25,15 @@ class OficiosResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         return $this->hasRole('admin');
     }
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('elabora.name')
-                    ->numeric()->hidden(),
+        return $form->schema([
+            Forms\Components\TextInput::make('elabora.name')->numeric()->hidden(),
+
 
                 Textarea::make('asunto')->required()->autosize(),
                 Forms\Components\TextInput::make('receptora')
@@ -95,21 +93,15 @@ class OficiosResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->actions([Tables\Actions\EditAction::make()])
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([Tables\Actions\DeleteBulkAction::make()])]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
