@@ -2,11 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Oficios\Pages\Auth\Register as AuthRegister;
+use App\Models\User;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
+use Filament\Pages\Auth\Register;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -26,7 +29,7 @@ class OficiosPanelProvider extends PanelProvider
             ->id('oficios')
             ->path('oficios')
             ->login()
-            ->registration()
+            //->registration(AuthRegister::class)
             ->spa()
             ->colors([
                 'primary' => Color::Purple,
@@ -39,7 +42,6 @@ class OficiosPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Oficios/Widgets'), for: 'App\\Filament\\Oficios\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

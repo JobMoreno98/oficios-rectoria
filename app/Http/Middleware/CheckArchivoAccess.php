@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Oficios;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckArchivoAccess
@@ -16,6 +17,11 @@ class CheckArchivoAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
+        
+        if (!auth()->check()) {
+            return redirect()->route('filament.oficios.auth.login');
+            abort(403, 'No tienes permiso para acceder a este archivo.');
+        }
         $user = $request->user();
         $registroId = $request->route('registro');
 

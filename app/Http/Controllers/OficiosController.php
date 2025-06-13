@@ -11,6 +11,7 @@ class OficiosController extends Controller
 {
     public function descargar(Oficios $oficio): StreamedResponse
     {
+        dd(!auth()->check());
         $ruta = $oficio->archivo;
 
         $user = auth()->user();

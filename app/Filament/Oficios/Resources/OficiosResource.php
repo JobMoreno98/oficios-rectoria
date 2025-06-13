@@ -55,10 +55,6 @@ class OficiosResource extends Resource
                         shouldOpenInNewTab: true
                     )
                     ->color('primary')
-
-                        // Renderizás la vista pasándole el record o lo que necesites
-                        return view('filament.components.link-descarga', ['record' => $record])->render();
-                    })
                     ->html() // IMPORTANTE: para que se renderice como HTML el contenido
                     ->sortable(false)
                     ->searchable(false),

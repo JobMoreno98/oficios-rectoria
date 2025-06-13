@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OficiosController;
+use App\Http\Middleware\CheckArchivoAccess;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,4 +10,4 @@ Route::get('/', function () {
 
 Route::get('/ver-oficio/{oficio}', [OficiosController::class, 'descargar'])
     ->name('descargar.sftp')
-    ->middleware(['auth']); // o el middleware de Filament
+    ->middleware(CheckArchivoAccess::class); // o el middleware de Filament

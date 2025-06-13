@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
         $resources = [
             'oficios',
             'user',
-            'role',
         ];
 
         // Acciones que genera Shield
@@ -47,6 +46,7 @@ class DatabaseSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
         // Crear roles
+        Role::firstOrCreate(['name' => 'Super Admin']);
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $editor = Role::firstOrCreate(['name' => 'administrativo']);
 
@@ -60,6 +60,12 @@ class DatabaseSeeder extends Seeder
             'create_oficios',
             'update_oficios',
         ]);
+
+        User::create([
+            'name' => 'Test Super Admin',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('Super Admin')->update();
 
         User::create([
             'name' => 'Test Admin',

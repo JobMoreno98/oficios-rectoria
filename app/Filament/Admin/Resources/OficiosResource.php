@@ -29,6 +29,7 @@ class OficiosResource extends Resource
     {
         return $this->hasRole('admin');
     }
+    
     public static function form(Form $form): Form
     {
         return $form->schema([
