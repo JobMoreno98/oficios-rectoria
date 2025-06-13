@@ -32,16 +32,29 @@ class OficiosResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->numeric()->searchable()->label('Folio'),
-                TextColumn::make('elabora.name')->sortable(),
-                TextColumn::make('asunto')->searchable(),
-                TextColumn::make('receptora')->searchable(),
-                TextColumn::make('created_at')->dateTime()->sortable()->label('Fecha de Solicitud'),
-                TextColumn::make('fecha_elaboracion')->date()->sortable(),
+                TextColumn::make('elabora.name')
+                    ->sortable(),
+                TextColumn::make('asunto')
+                    ->searchable(),
+                TextColumn::make('receptora')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()->label('Fecha de Solicitud'),
+                TextColumn::make('fecha_elaboracion')
+                    ->date()
+                    ->sortable(),
+                
                 TextColumn::make('archivo')
-                    ->label('Archivo Actual')
-                    ->formatStateUsing(function ($state, $record) {
-                        // $state es el valor de 'archivo' (ej: ruta o nombre)
-                        // $record es el modelo completo
+                    ->label('Archivo')
+                    ->formatStateUsing(fn($state) => $state ? 'Descargar archivo' : 'Sin archivo')
+                    ->url(
+                        fn($record) => $record->archivo
+                            ? route('descargar.sftp', ['oficio' => $record->id])
+                            : null,
+                        shouldOpenInNewTab: true
+                    )
+                    ->color('primary')
 
                         // Renderizás la vista pasándole el record o lo que necesites
                         return view('filament.components.link-descarga', ['record' => $record])->render();

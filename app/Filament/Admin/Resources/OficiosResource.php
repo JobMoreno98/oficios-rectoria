@@ -34,28 +34,62 @@ class OficiosResource extends Resource
         return $form->schema([
             Forms\Components\TextInput::make('elabora.name')->numeric()->hidden(),
 
-            Textarea::make('asunto')->required()->autosize(),
-            Forms\Components\TextInput::make('receptora')->required(),
-            Forms\Components\DatePicker::make('fecha_elaboracion')->required(),
-            FileUpload::make('archivo')
-                ->label('Archivo')
-                ->disk('local') // se sube temporalmente al disco local
-                ->directory('temp-uploads')
-                ->preserveFilenames()
-                ->acceptedFileTypes(['application/pdf']),
-            ViewField::make('archivo')
-                ->label('Archivo Actual')
-                ->view('filament.components.link-descarga', function ($record) {
-                    return ['record' => $record];
-                })
-                ->columnSpanFull(),
-        ]);
+
+                Textarea::make('asunto')->required()->autosize(),
+                Forms\Components\TextInput::make('receptora')
+                    ->required(),
+                Forms\Components\DatePicker::make('fecha_elaboracion')
+                    ->required(),
+                FileUpload::make('archivo')
+                    ->label('Archivo')
+                    ->disk('local') // se sube temporalmente al disco local
+                    ->directory('temp-uploads')
+                    ->preserveFilenames()
+                    ,
+                ViewField::make('archivo')
+                    ->label('Archivo Actual')
+                    ->view('filament.components.link-descarga', function ($record) {
+                        return ['record' => $record];
+                    })
+                    ->columnSpanFull()
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([TextColumn::make('id')->numeric()->searchable()->label('Folio'), Tables\Columns\TextColumn::make('solicito.name')->label('Solicitó')->sortable(), Tables\Columns\TextColumn::make('asunto')->searchable(), Tables\Columns\TextColumn::make('receptora')->searchable(), Tables\Columns\TextColumn::make('fecha_elaboracion')->date()->sortable(), TextColumn::make('log_path')->label('Log')->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')->url(fn($record) => $record->log_path ? route('descargar.log.sftp', ['proceso' => $record->id]) : null, shouldOpenInNewTab: true)->color('primary'), Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true), Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true)])
+            ->columns([
+                TextColumn::make('id')->numeric()->searchable()->label('Folio'),
+                Tables\Columns\TextColumn::make('solicito.name')->label('Solicitó')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('asunto')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('receptora')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('fecha_elaboracion')
+                    ->date()
+                    ->sortable(),
+
+
+                TextColumn::make('archivo')
+                    ->label('Archivo')
+                    ->formatStateUsing(fn($state) => $state ? 'Descargar archivo' : 'Sin archivo')
+                    ->url(
+                        fn($record) => $record->log_path
+                            ? route('descargar.log.sftp', ['proceso' => $record->id])
+                            : null,
+                        shouldOpenInNewTab: true
+                    )
+                    ->color('primary'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
             ->filters([
                 //
             ])

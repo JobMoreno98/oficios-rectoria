@@ -6,14 +6,16 @@ use App\Filament\Admin\Resources\OficiosResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditOficios extends EditRecord
 {
     protected static string $resource = OficiosResource::class;
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['elaboro_id'] = auth()->id();
-        if (isset($data['archivo'])) {
+         if (isset($data['archivo'])) {
             $archivo = $data['archivo']; // ruta relativa en disco local
             if (is_array($archivo)) {
                 $rutaRelativa = collect($archivo)->first();
@@ -34,6 +36,7 @@ class EditOficios extends EditRecord
         }
         return $data;
     }
+
     protected function getHeaderActions(): array
     {
         return [Actions\DeleteAction::make()];
