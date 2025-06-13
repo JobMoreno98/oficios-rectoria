@@ -47,7 +47,7 @@ class OficiosResource extends Resource
                     ->disk('local') // se sube temporalmente al disco local
                     ->directory('temp-uploads')
                     ->preserveFilenames()
-                    ->required(),
+                    ,
                 ViewField::make('archivo')
                     ->label('Archivo Actual')
                     ->view('filament.components.link-descarga', function ($record) {
@@ -73,9 +73,9 @@ class OficiosResource extends Resource
                     ->sortable(),
 
 
-                TextColumn::make('log_path')
-                    ->label('Log')
-                    ->formatStateUsing(fn($state) => $state ? 'Descargar log' : 'Sin archivo')
+                TextColumn::make('archivo')
+                    ->label('Archivo')
+                    ->formatStateUsing(fn($state) => $state ? 'Descargar archivo' : 'Sin archivo')
                     ->url(
                         fn($record) => $record->log_path
                             ? route('descargar.log.sftp', ['proceso' => $record->id])

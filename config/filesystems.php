@@ -59,15 +59,20 @@ return [
             'throw' => false,
             'report' => false,
         ],
+
         'sftp_files' => [
             'driver' => 'sftp',
-            'host' => '192.168.100.20',
-            'username' => 'job',
-            'password' => '50p0rt3',
-            // 'privateKey' => storage_path('keys/id_rsa'), // si usás autenticación con clave
-            'port' => 22,
-            'root' => '/home/job/archivos', // ruta remota base
-            'timeout' => 30,
+            'host' => env('SFTP_HOST'),
+            'port' => env('SFTP_PORT', 22),
+            'username' => env('SFTP_USERNAME'),
+
+            // Puedes usar contraseña o clave privada
+            'password' => env('SFTP_PASSWORD'), // Opcional si usas clave privada
+            'privateKey' => env('SFTP_PRIVATE_KEY'), // Opcional si usas clave privada
+            'passphrase' => env('SFTP_PASSPHRASE'), // Opcional
+
+            'root' => env('SFTP_ROOT', ''),
+            'timeout' => env('SFTP_TIMEOUT', 30),
         ],
 
     ],
