@@ -14,6 +14,8 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Hasnayeen\Themes\Http\Middleware\SetTheme;
+use Hasnayeen\Themes\ThemesPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -42,6 +44,8 @@ class OficiosPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Oficios/Widgets'), for: 'App\\Filament\\Oficios\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+            ])->plugins([
+                ThemesPlugin::make(),
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -53,6 +57,7 @@ class OficiosPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                SetTheme::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

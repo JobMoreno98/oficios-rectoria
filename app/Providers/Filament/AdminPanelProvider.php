@@ -18,7 +18,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-
+use Filament\Support\Enums\MaxWidth;
+use Hasnayeen\Themes\Http\Middleware\SetTheme;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -28,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -51,9 +53,13 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                SetTheme::class
             ])->plugins([
                 FilamentShieldPlugin::make(),
-            ])
+
+            ])->plugin(
+                \Hasnayeen\Themes\ThemesPlugin::make()
+            )
             ->authMiddleware([
                 Authenticate::class,
             ]);

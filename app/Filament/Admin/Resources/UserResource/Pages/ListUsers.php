@@ -17,8 +17,14 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make()->label('Agregar'),
         ];
     }
-        public function getTitle(): string|Htmlable
+    public function getTitle(): string|Htmlable
     {
         return 'Usuarios';
+    }
+    protected function getTableWrapperHtmlAttributes(): array
+    {
+        return [
+            'class' => 'w-full',
+        ];
     }
 }
