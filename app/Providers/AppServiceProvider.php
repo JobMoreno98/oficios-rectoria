@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Filament\Support\Assets\Css;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+
+use Filament\Support\Facades\FilamentAsset;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +32,9 @@ class AppServiceProvider extends ServiceProvider
                 return true; // Super Admin tiene permiso para todo
             }
         });
+        /*
+        FilamentAsset::register([
+            Css::make('filament-custom', asset('css/filament-custom.css')),
+        ]);*/
     }
 }

@@ -31,15 +31,16 @@ class OficiosPanelProvider extends PanelProvider
             ->id('oficios')
             ->path('oficios')
             ->login()
+            ->profile(isSimple:false)
             //->registration(AuthRegister::class)
             ->spa()
             ->colors([
-                'primary' => Color::Purple,
+                'primary' => Color::Red,
             ])
             ->discoverResources(in: app_path('Filament/Oficios/Resources'), for: 'App\\Filament\\Oficios\\Resources')
             ->discoverPages(in: app_path('Filament/Oficios/Pages'), for: 'App\\Filament\\Oficios\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                //Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Oficios/Widgets'), for: 'App\\Filament\\Oficios\\Widgets')
             ->widgets([
